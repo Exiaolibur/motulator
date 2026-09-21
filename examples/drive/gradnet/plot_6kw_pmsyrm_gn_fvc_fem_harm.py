@@ -77,3 +77,52 @@ mdl.mechanics.set_external_load_torque(lambda t: (t > 1.25) * 0.5 * base.tau)
 sim = model.Simulation(mdl, ctrl)
 res = sim.simulate(t_stop=1.75)
 utils.plot(res, base)
+
+
+#%%
+import matplotlib.pyplot as plt
+
+subplots = ["speed", "torque", "current", "flux"]
+drop = {
+    "speed": [r"$\hat{\omega}_\mathrm{m}$"],
+    "current": [r"$i_\mathrm{d}^\mathrm{ref}$", r"$i_\mathrm{q}^\mathrm{ref}$"],
+    "flux": [r"$\psi_\mathrm{s}$"],
+}
+colors = {  # 删线之后的线序
+    "torque": ["b", "gray", "r", "m"],   # τ_ref, τ_m, τ̂_m, τ_L
+    "current": ["b", "r"],                # i_d, i_q
+    "flux": ["b", "r"],                   # ψ_ref, ψ̂_s
+}
+legend_loc = {"speed": "right", "torque": "upper center", "current": "upper center", "flux": "upper right"}
+
+_show, plt.show = plt.show, lambda *a, **k: None
+utils.plot(
+    res, base, subplots=subplots, latex=True,
+    y_lims=[(-0.2, 2.2), (-0.2, 2.2), (-2.2, 2), (0, 1.25)],
+    y_ticks=[[0, 0.5, 1.0, 1.5, 2.0],
+             [0, 0.5, 1.0, 1.5, 2.0],
+             [-2, -1, 0, 1, 2],
+             [0, 0.25, 0.5, 0.75, 1.0, 1.25]],
+)
+plt.show = _show
+fig = plt.gcf()
+w, h = plt.rcParams["figure.figsize"]
+fig.set_size_inches(w, h * 3 * 4 / 5)
+
+for ax, name in zip(fig.axes, subplots):
+    for l in list(ax.lines):
+        if l.get_label() in drop.get(name, []):
+            l.remove()
+    for l, c in zip(ax.lines, colors.get(name, [])):
+        l.set_color(c)
+    if name == "torque":
+        ax.lines[1].set(linewidth=0.5, zorder=1, alpha=0.5)   # τ_m at bottom
+        ax.lines[3].set(linestyle="--")
+        ax.legend(handles=[ax.lines[0], ax.lines[2], ax.lines[3], ax.lines[1]])
+    elif ax.get_legend():
+        ax.legend(loc=legend_loc[name])
+
+(p / "figs").mkdir(parents=True, exist_ok=True)
+fig.savefig(p / "figs" / "sim.pdf", bbox_inches="tight")
+plt.show()
+# %%
