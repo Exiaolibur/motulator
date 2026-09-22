@@ -101,6 +101,7 @@ gn.plot_surface_vs_current_and_angle(
     trn_data=trn_data,
     opts=gn.PlotOptions(
         base=base,
+        latex=True,
         lims={"x": (0, 2), "y": (0, 60), "z": (0, 1.5)},
         ticks={"x": [0, 1, 2], "y": [0, 30, 60], "z": [0, 0.5, 1.0, 1.5]},
         loci_levels_source="val",
@@ -119,6 +120,7 @@ gn.plot_output_vs_angle(
     trn_data=trn_data,
     opts=gn.PlotOptions(
         base=base,
+        latex=True,
         lims={"x": (0, 60), "y": (0, 1)},
         ticks={"x": [0, 15, 30, 45, 60], "y": [0, 0.2, 0.4, 0.6, 0.8, 1.0]},
     ),

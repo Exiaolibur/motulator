@@ -76,7 +76,7 @@ mdl.mechanics.set_external_load_torque(lambda t: (t > 1.25) * 0.5 * base.tau)
 
 sim = model.Simulation(mdl, ctrl)
 res = sim.simulate(t_stop=1.75)
-utils.plot(res, base)
+# utils.plot(res, base)
 
 
 #%%
@@ -85,6 +85,7 @@ import matplotlib.pyplot as plt
 subplots = ["speed", "torque", "current", "flux"]
 drop = {
     "speed": [r"$\hat{\omega}_\mathrm{m}$"],
+    "torque": [],
     "current": [r"$i_\mathrm{d}^\mathrm{ref}$", r"$i_\mathrm{q}^\mathrm{ref}$"],
     "flux": [r"$\psi_\mathrm{s}$"],
 }
@@ -118,6 +119,7 @@ for ax, name in zip(fig.axes, subplots):
     if name == "torque":
         ax.lines[1].set(linewidth=0.5, zorder=1, alpha=0.5)   # τ_m at bottom
         ax.lines[3].set(linestyle="--")
+        ax.lines[3].set_label(r"$\tau_\mathrm{L}$")
         ax.legend(handles=[ax.lines[0], ax.lines[2], ax.lines[3], ax.lines[1]])
     elif ax.get_legend():
         ax.legend(loc=legend_loc[name])
